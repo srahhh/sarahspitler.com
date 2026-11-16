@@ -249,6 +249,43 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   padding: clamp(16px, 3.7%, 46px) clamp(16px, 4.2%, 53px);
 }
 .media__frame img, .media__frame video { width: 100%; border-radius: 2px; }
+/* Video with site-styled controls (built in main.js; native controls are the no-JS fallback) */
+.video { position: relative; }
+.video video { display: block; cursor: pointer; background: #000; }
+.video__controls {
+  display: flex; align-items: center; gap: 16px;
+  padding-top: clamp(12px, 1.6vw, 20px);
+}
+.video__toggle {
+  flex: none; width: 36px; height: 36px;
+  display: grid; place-items: center;
+  border: 1px solid currentColor; border-radius: 50%;
+  transition: background-color .2s ease, color .2s ease, border-color .2s ease;
+}
+.video__toggle:hover, .video__toggle:focus-visible { background: var(--accent); border-color: var(--accent); color: #fff; }
+.video__toggle svg { width: 12px; height: 12px; }
+.video__toggle .icon-play { display: none; margin-left: 2px; }
+.video.is-paused .video__toggle .icon-play { display: block; }
+.video.is-paused .video__toggle .icon-pause { display: none; }
+.video__scrub {
+  flex: 1; min-width: 0; height: 20px; margin: 0;
+  -webkit-appearance: none; appearance: none; background: none; cursor: pointer;
+}
+.video__scrub::-webkit-slider-runnable-track {
+  height: 1px;
+  background: linear-gradient(to right, var(--ink) var(--p, 0%), #c9c9c9 var(--p, 0%));
+}
+.video__scrub::-moz-range-track { height: 1px; background: #c9c9c9; }
+.video__scrub::-moz-range-progress { height: 1px; background: var(--ink); }
+.video__scrub::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 11px; height: 11px; margin-top: -5px;
+  border-radius: 50%; background: var(--ink); transition: transform .15s ease, background-color .15s ease;
+}
+.video__scrub::-moz-range-thumb { width: 11px; height: 11px; border: 0; border-radius: 50%; background: var(--ink); }
+.video__scrub:hover::-webkit-slider-thumb, .video__scrub:focus-visible::-webkit-slider-thumb { transform: scale(1.35); background: var(--accent); }
+.video__time { flex: none; font-family: var(--font-mono); font-size: 12px; color: var(--caption); font-variant-numeric: tabular-nums; }
+.media__frame:has(.video__controls) { padding-bottom: clamp(10px, 1.6vw, 20px); }
+
 .media figcaption {
   display: flex; align-items: flex-start; gap: 12px;
   margin-top: 20px; max-width: 1095px;

@@ -55,6 +55,62 @@
     fade();
   }
 
+  /* ---------- Videos: autoplay in view, with site-styled play / pause and scrubber ---------- */
+  document.querySelectorAll("[data-video]").forEach((wrap) => {
+    const video = wrap.querySelector("video");
+    if (!video) return;
+    video.controls = false;
+    video.muted = true;
+    const bar = document.createElement("div");
+    bar.className = "video__controls";
+    bar.innerHTML = `
+      <button class="video__toggle" type="button" aria-label="Pause video">
+        <svg class="icon-pause" viewBox="0 0 12 12" fill="currentColor" aria-hidden="true"><rect x="1.5" y="1" width="3" height="10"/><rect x="7.5" y="1" width="3" height="10"/></svg>
+        <svg class="icon-play" viewBox="0 0 12 12" fill="currentColor" aria-hidden="true"><path d="M2 1l9 5-9 5z"/></svg>
+      </button>
+      <input class="video__scrub" type="range" min="0" max="1000" step="1" value="0" aria-label="Video progress">
+      <span class="video__time" aria-hidden="true">0:00 / 0:00</span>`;
+    wrap.append(bar);
+    const toggle = bar.querySelector(".video__toggle");
+    const scrub = bar.querySelector(".video__scrub");
+    const time = bar.querySelector(".video__time");
+    const fmt = (s) => { s = Math.max(0, Math.floor(s || 0)); return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); };
+
+    let userPaused = reduceMotion;   /* visitors who prefer reduced motion press play themselves */
+    let scrubbing = false;
+    const play = () => { const p = video.play(); if (p && p.catch) p.catch(() => {}); };
+    const sync = () => {
+      wrap.classList.toggle("is-paused", video.paused);
+      toggle.setAttribute("aria-label", video.paused ? "Play video" : "Pause video");
+    };
+    const tick = () => {
+      const d = video.duration || 0;
+      const p = d ? video.currentTime / d : 0;
+      if (!scrubbing) scrub.value = Math.round(p * 1000);
+      scrub.style.setProperty("--p", (scrub.value / 10) + "%");
+      time.textContent = fmt(video.currentTime) + " / " + fmt(d);
+    };
+    const userToggle = () => { if (video.paused) { userPaused = false; play(); } else { userPaused = true; video.pause(); } };
+    toggle.addEventListener("click", userToggle);
+    video.addEventListener("click", userToggle);
+    ["play", "pause"].forEach((ev) => video.addEventListener(ev, sync));
+    ["timeupdate", "loadedmetadata", "durationchange"].forEach((ev) => video.addEventListener(ev, tick));
+    scrub.addEventListener("input", () => {
+      scrubbing = true;
+      if (video.duration) video.currentTime = (scrub.value / 1000) * video.duration;
+      scrub.style.setProperty("--p", (scrub.value / 10) + "%");
+    });
+    scrub.addEventListener("change", () => { scrubbing = false; });
+
+    if (reduceMotion) video.pause();
+    /* Play only while on screen, unless the visitor paused it */
+    new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) { if (!userPaused) play(); }
+      else video.pause();
+    }, { threshold: 0.35 }).observe(video);
+    sync(); tick();
+  });
+
   /* ---------- Process & Takeaways carousel ---------- */
   document.querySelectorAll(".process").forEach((section) => {
     const track = section.querySelector(".process__track");
