@@ -18,6 +18,7 @@ Open `index.html` in a browser, or serve the folder (`python3 -m http.server`) a
 - **Project hover colour**: `style="--accent: #f85c12"` on each `.work-row` (home, and the "next" row at the bottom of each project page) and on the project page's `<body>`.
 - **Project illustration**: replace `assets/img/train-placeholder.png` in each `.work-row__art` with that project's artwork (SVG ideal).
 - **Video instead of a still**: copy a `<div class="video" data-video>` block from `work/bnsf.html`. Videos live in `assets/video/` as .mp4, each with a poster image in `assets/img/`. They autoplay muted while on screen; the play/pause button and scrubber are added by `main.js`.
+- **Several videos in one frame**: copy the `data-media-carousel` figure in `work/bnsf.html`. Add a `.media__slide` and a matching caption `<span>` (with `hidden`) for each extra item, in the same order.
 - **Process slides**: add or remove `<li class="process__slide">` items; the dots update themselves.
 - **About interaction**: remove `data-word-trail` from `.about__statement` to turn it off.
 

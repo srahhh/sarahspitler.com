@@ -111,6 +111,48 @@
     sync(); tick();
   });
 
+  /* ---------- Media carousel: several items in one frame, caption follows the item in view ---------- */
+  document.querySelectorAll("[data-media-carousel]").forEach((fig) => {
+    const track = fig.querySelector(".media__track");
+    const slides = [...track.children];
+    const captions = [...fig.querySelectorAll(".media__captions > span")];
+    const arrow = fig.querySelector("figcaption > svg");
+    const count = fig.querySelector(".media__count");
+    const prev = fig.querySelector(".media__prev");
+    const next = fig.querySelector(".media__next");
+    let active = 0;
+    const goTo = (i) => {
+      i = Math.max(0, Math.min(slides.length - 1, i));
+      track.scrollTo({ left: slides[i].offsetLeft - track.offsetLeft, behavior: reduceMotion ? "auto" : "smooth" });
+    };
+    /* Items can differ in height: the frame follows the one in view */
+    const fit = () => { const h = slides[active].offsetHeight; if (h) track.style.height = h + "px"; };
+    addEventListener("resize", fit);
+    fig.querySelectorAll("video, img").forEach((m) => { m.addEventListener("loadedmetadata", fit); m.addEventListener("load", fit); });
+    const render = (animate) => {
+      captions.forEach((c, n) => { c.hidden = n !== active; c.classList.toggle("is-in", animate && n === active); });
+      if (count) count.textContent = (active + 1) + " / " + slides.length;
+      if (prev) prev.disabled = active === 0;
+      if (next) next.disabled = active === slides.length - 1;
+      fit();
+      if (animate && arrow) { arrow.classList.remove("is-rising"); void arrow.getBoundingClientRect(); arrow.classList.add("is-rising"); }
+    };
+    const update = () => {
+      const w = slides[0].offsetWidth || 1;
+      let best = 0, dist = Infinity;
+      slides.forEach((s, i) => { const d = Math.abs(s.offsetLeft - track.offsetLeft - track.scrollLeft); if (d < dist) { dist = d; best = i; } });
+      if (best !== active && dist < w * 0.5) { active = best; render(true); }
+    };
+    track.addEventListener("scroll", () => requestAnimationFrame(update), { passive: true });
+    if (prev) prev.addEventListener("click", () => goTo(active - 1));
+    if (next) next.addEventListener("click", () => goTo(active + 1));
+    track.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowRight") { e.preventDefault(); goTo(active + 1); }
+      if (e.key === "ArrowLeft") { e.preventDefault(); goTo(active - 1); }
+    });
+    render(false);
+  });
+
   /* ---------- Process & Takeaways carousel ---------- */
   document.querySelectorAll(".process").forEach((section) => {
     const track = section.querySelector(".process__track");
@@ -118,9 +160,30 @@
     const dots = section.querySelector(".process__dots");
     if (!slides.length) return;
 
+    const behavior = reduceMotion ? "auto" : "smooth";
+    const padL = () => parseFloat(getComputedStyle(track).paddingLeft) || 0;
+    const startOf = (i) => slides[i].offsetLeft - track.offsetLeft - padL();
     const goTo = (i) => {
-      const pad = parseFloat(getComputedStyle(track).paddingLeft) || 0;
-      track.scrollTo({ left: slides[i].offsetLeft - track.offsetLeft - pad, behavior: reduceMotion ? "auto" : "smooth" });
+      i = Math.max(0, Math.min(slides.length - 1, i));
+      track.scrollTo({ left: startOf(i), behavior });
+    };
+    /* A slide wider than the view (the "System" strip) scrolls within itself before moving on.
+       roomIn(i, dir) = how far the track can still move inside slide i in that direction. */
+    const spanOf = (i) => {
+      const start = startOf(i);
+      const end = Math.min(start + slides[i].offsetWidth - (track.clientWidth - padL() * 2), track.scrollWidth - track.clientWidth);
+      return [start, Math.max(start, end)];
+    };
+    const isWide = (i) => i >= 0 && !!slides[i] && spanOf(i)[1] - spanOf(i)[0] > 4;
+    const roomIn = (i, dir) => {
+      if (!isWide(i)) return 0;
+      const [start, end] = spanOf(i);
+      return dir > 0 ? Math.max(0, end - track.scrollLeft) : Math.max(0, track.scrollLeft - start);
+    };
+    const step = (dir) => {
+      const room = roomIn(active, dir);
+      if (room > 4) track.scrollBy({ left: dir * Math.min(room, track.clientWidth * 0.6), behavior });
+      else goTo(active + dir);
     };
     const buttons = slides.map((_, i) => {
       const b = document.createElement("button");
@@ -152,8 +215,8 @@
     update();
 
     track.addEventListener("keydown", (e) => {
-      if (e.key === "ArrowRight") { e.preventDefault(); goTo(Math.min(active + 1, slides.length - 1)); }
-      if (e.key === "ArrowLeft") { e.preventDefault(); goTo(Math.max(active - 1, 0)); }
+      if (e.key === "ArrowRight") { e.preventDefault(); step(1); }
+      if (e.key === "ArrowLeft") { e.preventDefault(); step(-1); }
     });
 
     /* Arrow that follows the mouse over the peeking previous / next slide (mouse only) */
@@ -170,18 +233,22 @@
     };
     /* Which slide a click here would go to: the peeking slide under the mouse, or, because the
        previous slide barely shows, the previous one when the mouse is in the strip at the left edge. */
+    /* Returns a slide index, "fwd" / "back" (move within a wide slide), or -1 for nothing. */
     const targetAt = (x, y) => {
       const i = slideAt(x, y);
       if (i !== -1 && i !== active) return i;
-      const inTrack = y >= track.getBoundingClientRect().top && y <= track.getBoundingClientRect().bottom;
-      if (inTrack && active > 0 && x - track.getBoundingClientRect().left < 72) return active - 1;
+      const r = track.getBoundingClientRect();
+      const inTrack = y >= r.top && y <= r.bottom;
+      if (inTrack && i === active && x > r.right - 180 && roomIn(active, 1) > 4) return "fwd";
+      if (inTrack && i === active && x < r.left + 180 && roomIn(active, -1) > 4) return "back";
+      if (inTrack && active > 0 && x - r.left < 72) return active - 1;
       return -1;
     };
     const refreshArrow = () => {
       hoverIndex = mouse && !track.classList.contains("is-dragging") ? targetAt(mouse.x, mouse.y) : -1;
       const show = hoverIndex !== -1;
       if (show) {
-        const prev = hoverIndex < active;
+        const prev = hoverIndex === "back" || (typeof hoverIndex === "number" && hoverIndex < active);
         arrow.classList.toggle("is-prev", prev);
         arrow.style.left = mouse.x + (prev ? -22 : 22) + "px";
         arrow.style.top = mouse.y + 22 + "px";
@@ -199,11 +266,12 @@
     addEventListener("scroll", () => { if (mouse) requestAnimationFrame(refreshArrow); }, { passive: true });
 
     /* Mouse drag (touch and trackpads scroll natively); a plain click on a peeking slide goes to it */
-    let startX = 0, startLeft = 0, dragging = false, downIndex = -1;
+    let startX = 0, startLeft = 0, dragging = false, downIndex = -1, downActive = 0;
     track.addEventListener("pointerdown", (e) => {
       if (e.pointerType !== "mouse" || e.button !== 0) return;
       dragging = true; startX = e.clientX; startLeft = track.scrollLeft;
       downIndex = targetAt(e.clientX, e.clientY);
+      downActive = active;
       track.setPointerCapture(e.pointerId);
     });
     track.addEventListener("pointermove", (e) => {
@@ -216,9 +284,16 @@
       dragging = false;
       const moved = e.clientX - startX;
       track.classList.remove("is-dragging");
-      if (Math.abs(moved) <= 4 && downIndex !== -1 && e.type === "pointerup") goTo(downIndex);
-      else if (Math.abs(moved) > 60) goTo(Math.max(0, Math.min(slides.length - 1, active + (moved < 0 ? 1 : -1))));
-      else goTo(active);
+      const dir = moved < 0 ? 1 : -1;
+      if (Math.abs(moved) <= 4) {
+        if (e.type === "pointerup" && downIndex === "fwd") step(1);
+        else if (e.type === "pointerup" && downIndex === "back") step(-1);
+        else if (e.type === "pointerup" && downIndex !== -1) goTo(downIndex);
+      }
+      /* Dragging around inside a wide slide: stay put (snapping settles on the nearest image) */
+      else if (isWide(downActive) && track.scrollLeft >= spanOf(downActive)[0] - 8 && track.scrollLeft <= spanOf(downActive)[1] + 8) { /* free */ }
+      else if (Math.abs(moved) > 60) goTo(downActive + dir);
+      else goTo(downActive);
       refreshArrow();
     };
     track.addEventListener("pointerup", endDrag);

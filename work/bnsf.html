@@ -76,26 +76,105 @@
 
       <section class="chapter">
         <p class="chapter__num">II.</p>
-        <p>Using the overarching idea of <em>easy routing</em> (fpo) we quickly landed on several solutions that allowed us to lorem ispum from top to bottom (what did having a central concept get you). Richer narratives were built out to showcase BNSF as a modern, technology driven company while the flows and micro interactions used the idea to help lead customers to exactly where they needed to be with the least friction possible.</p>
+        <p><em>Movement</em> became our strategic focus. Rather than big, showy animation, we leaned on small, dynamic touches—headlines that advance, content that eases into place, a call to action that travels with you—to communicate <em>progressing forward</em>, both functionally and metaphorically. Each motion does a job, guiding people toward their next step, while quietly reinforcing what BNSF does: keep things moving.</p>
       </section>
 
-      <figure class="media">
+      <!-- Media carousel: one .media__slide per item, one caption <span> per slide, in the same order -->
+      <figure class="media media--carousel" data-media-carousel>
         <div class="media__frame">
-          <div class="video" data-video>
-            <video src="../assets/video/bnsf-home-scroll.mp4" poster="../assets/img/bnsf-home-scroll-poster.jpg" width="1600" height="1174" autoplay muted loop playsinline controls preload="metadata" aria-label="Screen recording: scrolling down the BNSF.com home page as a “Ship it, easy” button joins the navigation"></video>
+          <div class="media__track" tabindex="0" aria-label="Home page recordings — 2 items, scroll sideways">
+            <div class="media__slide">
+              <div class="video" data-video>
+                <video src="../assets/video/bnsf-home-scroll.mp4" poster="../assets/img/bnsf-home-scroll-poster.jpg" width="1600" height="1174" autoplay muted loop playsinline controls preload="metadata" aria-label="Screen recording: scrolling down the BNSF.com home page as a “Ship it, easy” button joins the navigation"></video>
+              </div>
+            </div>
+            <div class="media__slide">
+              <div class="video" data-video>
+                <video src="../assets/video/bnsf-home-lower-scroll.mp4" poster="../assets/img/bnsf-home-lower-scroll-poster.jpg" width="1600" height="1014" autoplay muted loop playsinline controls preload="metadata" aria-label="Screen recording: scrolling the lower BNSF.com home page as a small train travels along a dotted line between sections"></video>
+              </div>
+            </div>
           </div>
         </div>
-        <figcaption><svg viewBox="0 0 16 20" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true"><path d="M8 20V1M1 8l7-7 7 7"/></svg><span>Every page resolves into a low-friction next step, and a persistent “Ship It” button becomes part of the navigation as you scroll.</span></figcaption>
+        <figcaption>
+          <svg viewBox="0 0 16 20" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true"><path d="M8 20V1M1 8l7-7 7 7"/></svg>
+          <span class="media__captions" aria-live="polite">
+            <span>Every page resolves into a low-friction next step, and a persistent “Ship It” button becomes part of the navigation as you scroll.</span>
+            <span hidden>On the Home page, an extra touch of a small moving train playfully positions the dotted line as a metaphor that “moves” the user through the site.</span>
+          </span>
+          <span class="media__nav">
+            <span class="media__count" aria-hidden="true">1 / 2</span>
+            <button class="media__prev" type="button" aria-label="Previous item"><svg viewBox="0 0 20 16" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true"><path d="M0 8h19M12 1l7 7-7 7"/></svg></button>
+            <button class="media__next" type="button" aria-label="Next item"><svg viewBox="0 0 20 16" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true"><path d="M0 8h19M12 1l7 7-7 7"/></svg></button>
+          </span>
+        </figcaption>
       </figure>
 
       <section class="chapter">
         <p class="chapter__num">III.</p>
-        <p>This concept also informed the way we approached several very large operations issues, such as search and self-serve help. Previously x ys z lorem ispum dolor it amet respequic aloo mateer. Zzyzva verlag lorem ispum dolor it amet resepquiv aloo lore foolor dol it amerverg greans.</p>
+        <p>Keeping users progressing forward informed the way we approached several very large operations issues, such as search and self-serve help. Previously methods of information-seeking were informed by the business structure, rather than user needs, and often required insider knowledge to even get started. We overhauled the experience by using smart defaults, natural language queries, and scalable directories that could be both familiar while also customized for unique contexts.</p>
       </section>
 
-      <figure class="media">
-        <div class="media__frame"><img src="../assets/img/bnsf-facility-filter.jpg" width="1144" height="784" loading="lazy" alt="“Find your Facility” directory with type-to-filter results"></div>
-        <figcaption><svg viewBox="0 0 16 20" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true"><path d="M8 20V1M1 8l7-7 7 7"/></svg><span>Campaign templates let authors build deep-dive content inside the main site, replacing hard-to-maintain microsites.</span></figcaption>
+      <figure class="media media--carousel" data-media-carousel>
+        <div class="media__frame">
+          <div class="media__track" tabindex="0" aria-label="Search and self-serve recordings — 2 items, scroll sideways">
+            <div class="media__slide">
+              <div class="video" data-video>
+                <video src="../assets/video/bnsf-type-to-filter.mp4" poster="../assets/img/bnsf-type-to-filter-poster.jpg" width="1600" height="1096" autoplay muted loop playsinline controls preload="metadata" aria-label="Screen recording: typing in the “Find your Facility” directory narrows the list letter by letter, then a facility expands to show its services"></video>
+              </div>
+            </div>
+            <div class="media__slide">
+              <div class="video" data-video>
+                <video src="../assets/video/bnsf-search-flow.mp4" poster="../assets/img/bnsf-search-flow-poster.jpg" width="1600" height="930" autoplay muted loop playsinline controls preload="metadata" aria-label="Screen recording: opening “Ask BNSF anything”, asking how to ship 300k lbs of fertilizer in Texas, and reading an AI answer with sources and related questions"></video>
+              </div>
+            </div>
+          </div>
+        </div>
+        <figcaption>
+          <svg viewBox="0 0 16 20" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true"><path d="M8 20V1M1 8l7-7 7 7"/></svg>
+          <span class="media__captions" aria-live="polite">
+            <span>A directory that answers as you type. Results narrow with every letter, matches are highlighted and the count updates live, so finding a facility takes no knowledge of how BNSF is organized. Details open in place.</span>
+            <span hidden>Search starts with a question, not a keyword. “Ask BNSF anything” offers common questions as a way in, then answers in plain language with numbered sources, related follow-ups and a route to a person, with full results one click away.</span>
+          </span>
+          <span class="media__nav">
+            <span class="media__count" aria-hidden="true">1 / 2</span>
+            <button class="media__prev" type="button" aria-label="Previous item"><svg viewBox="0 0 20 16" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true"><path d="M0 8h19M12 1l7 7-7 7"/></svg></button>
+            <button class="media__next" type="button" aria-label="Next item"><svg viewBox="0 0 20 16" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true"><path d="M0 8h19M12 1l7 7-7 7"/></svg></button>
+          </span>
+        </figcaption>
+      </figure>
+
+      <section class="chapter">
+        <p class="chapter__num">IV.</p>
+        <p>We created a system of over 60 reusable components that brought velocity to development and content authoring, without sacrificing attention to detail. The MVP site launched in November 2026.</p>
+      </section>
+
+      <figure class="media media--carousel" data-media-carousel>
+        <div class="media__frame">
+          <div class="media__track" tabindex="0" aria-label="Component system recordings — 2 items, scroll sideways">
+            <div class="media__slide">
+              <div class="video" data-video>
+                <video src="../assets/video/bnsf-intermodal.mp4" poster="../assets/img/bnsf-intermodal-poster.jpg" width="1600" height="1134" autoplay muted loop playsinline controls preload="metadata" aria-label="Screen recording: scrolling the Intermodal page past headline statistics, product tiles, a benefits list and an animated “Intermodal 101” diagram of a shipment’s journey"></video>
+              </div>
+            </div>
+            <div class="media__slide">
+              <div class="video" data-video>
+                <video src="../assets/video/bnsf-menu-overlay.mp4" poster="../assets/img/bnsf-menu-overlay-poster.jpg" width="1600" height="864" autoplay muted loop playsinline controls preload="metadata" aria-label="Screen recording: moving through the Ship menu overlay as a shimmer runs along the dividers between its columns"></video>
+              </div>
+            </div>
+          </div>
+        </div>
+        <figcaption>
+          <svg viewBox="0 0 16 20" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true"><path d="M8 20V1M1 8l7-7 7 7"/></svg>
+          <span class="media__captions" aria-live="polite">
+            <span>From a system of interactive tiles to motion-based “101” explainers of how rail shipping works, the design aimed to simplify and make rail shipping feel accessible and modern.</span>
+            <span hidden>Small touches, such as a shimmer effect on menu section dividers, brought life to the experience.</span>
+          </span>
+          <span class="media__nav">
+            <span class="media__count" aria-hidden="true">1 / 2</span>
+            <button class="media__prev" type="button" aria-label="Previous item"><svg viewBox="0 0 20 16" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true"><path d="M0 8h19M12 1l7 7-7 7"/></svg></button>
+            <button class="media__next" type="button" aria-label="Next item"><svg viewBox="0 0 20 16" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true"><path d="M0 8h19M12 1l7 7-7 7"/></svg></button>
+          </span>
+        </figcaption>
       </figure>
     </div>
 
@@ -104,16 +183,28 @@
       <h2 class="process__heading" id="process-heading">Process &amp; Takeaways</h2>
       <ul class="process__track" tabindex="0" aria-label="Process and takeaways — scroll sideways">
         <li class="process__slide">
-          <p><em>Validate the direction fast:</em> a proof of concept that aligned stakeholders on a new identity and a navigation built around user intent (ship, track, manage, learn and work).</p>
-          <img src="../assets/img/bnsf-process-nav.jpg" width="1378" height="626" loading="lazy" alt="Navigation component states across desktop, small desktop, tablet and mobile breakpoints">
+          <p><em>Validate the direction fast:</em> a proof of concept that aligned stakeholders on a new identity and a navigation built around user intent (shipping, learning, building, and managing).</p>
+          <div class="process__media"><img src="../assets/img/bnsf-sys-menu.jpg" width="1732" height="894" loading="lazy" alt="Global navigation menu states across desktop, small desktop, tablet and mobile breakpoints"></div>
         </li>
         <li class="process__slide">
           <p><em>Design for the funnel:</em> end-to-end flows that carry a visitor from awareness through education, proof and a clear conversion point.</p>
-          <img src="../assets/img/bnsf-process-nav.jpg" width="1378" height="626" loading="lazy" alt="Placeholder — navigation component states">
+          <div class="process__media"><img src="../assets/img/bnsf-sys-journey.jpg" width="1901" height="996" loading="lazy" alt="“New to rail” prospective shipper journey map: user intent, pain points, motivators and relevant content across discovery, evaluation and decision"></div>
         </li>
         <li class="process__slide">
-          <p><em>Third takeaway (placeholder):</em> add system-level work, planning docs, diagrams or research here.</p>
-          <img src="../assets/img/bnsf-process-nav.jpg" width="1378" height="626" loading="lazy" alt="Placeholder — navigation component states">
+          <p><em>Guided shipping flow:</em> the process of system and user decisions that affect their customized shipping recommendation result page.</p>
+          <div class="process__media"><img src="../assets/img/bnsf-sys-form-flow.jpg" width="2400" height="1385" loading="lazy" alt="Modal mobile form flow: what, where and conditional questions branching into intermodal and carload paths toward a recommendation"></div>
+        </li>
+        <li class="process__slide process__slide--wide">
+          <p><em>System:</em> type, atoms, illustration, component states and content guidelines that let more than 60 components scale across teams.</p>
+          <!-- One wide strip: it runs off the right edge and scrolls sideways, image by image -->
+          <div class="process__strip">
+              <img src="../assets/img/bnsf-sys-typography.jpg" width="1763" height="909" loading="lazy" alt="Typography specimens on dark backgrounds">
+              <img src="../assets/img/bnsf-sys-atoms.jpg" width="1689" height="1154" loading="lazy" alt="Atoms: buttons, text links, form elements and lines">
+              <img src="../assets/img/bnsf-sys-illustrations.jpg" width="1087" height="967" loading="lazy" alt="2D and 3D illustration sets of trains, trucks, containers and ships">
+              <img src="../assets/img/bnsf-sys-thumbnails.jpg" width="1197" height="925" loading="lazy" alt="Thumbnail row states: active, hover and keyboard focus">
+              <img src="../assets/img/bnsf-sys-copy-guidelines.jpg" width="877" height="1141" loading="lazy" alt="Copy guidelines with “instead of / say” examples">
+              <img src="../assets/img/bnsf-sys-watch-out.jpg" width="1025" height="1141" loading="lazy" alt="“What to watch out for” guidance on colour, borders and contrast">
+          </div>
         </li>
       </ul>
       <div class="process__dots"></div>

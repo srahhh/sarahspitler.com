@@ -243,7 +243,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .chapter p:not(.chapter__num) { font-size: var(--fs-body); line-height: 1.5; }
 .chapter .lead { color: var(--accent); }
 
-.media { margin: 0; max-width: 1232px; }
+.media { margin: 0; max-width: 1232px; min-width: 0; }
 .media__frame {
   background: var(--surface);
   padding: clamp(16px, 3.7%, 46px) clamp(16px, 4.2%, 53px);
@@ -293,6 +293,41 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 }
 .media figcaption svg { flex: none; width: 16px; height: 20px; margin: 1px 8px 0; }
 
+/* Media carousel: several items in one frame; the caption follows the item in view */
+.media__track {
+  display: flex; gap: 32px; min-width: 0;
+  overflow-x: auto; overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory; scrollbar-width: none;
+}
+.media__track::-webkit-scrollbar { display: none; }
+.media__slide { flex: 0 0 100%; min-width: 0; scroll-snap-align: start; align-self: flex-start; }
+.media__track { transition: height .45s var(--ease); }
+.media--carousel figcaption { max-width: none; }
+.media__captions { flex: 1; min-width: 0; max-width: 1039px; }
+.media__captions span { display: block; }
+.media__captions span[hidden] { display: none; }
+.media__nav { flex: none; display: flex; align-items: center; gap: 10px; margin-left: auto; padding-left: 16px; font-style: normal; color: var(--ink); }
+.media__count { font-family: var(--font-mono); font-size: 12px; color: var(--caption); margin-right: 6px; white-space: nowrap; }
+.media__nav button {
+  width: 36px; height: 36px; display: grid; place-items: center;
+  border: 1px solid currentColor; border-radius: 50%;
+  transition: background-color .2s ease, color .2s ease, border-color .2s ease, opacity .2s ease;
+}
+.media__nav button svg { width: 14px; height: 11px; margin: 0; }
+.media__prev svg { transform: rotate(180deg); }
+.media__nav button:hover:not(:disabled), .media__nav button:focus-visible { background: var(--accent); border-color: var(--accent); color: #fff; }
+.media__nav button:disabled { opacity: .25; cursor: default; }
+/* The caption's arrow rises and fades in each time the item changes */
+.media figcaption > svg.is-rising { animation: arrow-rise .7s var(--ease) both; }
+@keyframes arrow-rise { from { opacity: 0; transform: translateY(12px); } }
+.media__captions span.is-in { animation: caption-in .5s ease both; }
+@keyframes caption-in { from { opacity: 0; } }
+@media (max-width: 699px) {
+  .media--carousel figcaption { flex-wrap: wrap; }
+  .media__captions { flex-basis: calc(100% - 50px); }
+  .media__nav { margin-left: 44px; padding-left: 0; margin-top: 12px; }
+}
+
 /* ---------- Process & Takeaways (dark, scrolls sideways) ---------- */
 .process {
   scroll-margin-top: var(--header-h);
@@ -313,8 +348,9 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 }
 .process__track::-webkit-scrollbar { display: none; }
 .process__track.is-dragging { cursor: grabbing; scroll-snap-type: none; user-select: none; }
+.process__track { --slide-w: min(1378px, calc(100vw - var(--gutter) * 2 - 12vw)); }
 .process__slide {
-  flex: 0 0 min(1378px, calc(100vw - var(--gutter) * 2 - 12vw));
+  flex: 0 0 var(--slide-w);
   display: flex; flex-direction: column; justify-content: space-between;
   gap: clamp(28px, calc(58 * var(--u)), 58px);
   scroll-snap-align: start;
@@ -322,9 +358,37 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 }
 .process__slide.is-active { opacity: 1; }
 .process__slide p { max-width: 911px; font-size: var(--fs-quote); font-weight: 300; line-height: 1.3; }
-.process__slide img {
-  width: 100%; aspect-ratio: 1378 / 625; object-fit: cover; object-position: bottom;
-  border-radius: 8px; pointer-events: none;
+/* Each slide's image sits in a 16:9 panel, contained so diagrams are never cropped */
+.process__media {
+  --pad: clamp(12px, 2vw, 32px);
+  position: relative;
+  aspect-ratio: 16 / 9;
+  padding: var(--pad);
+  background: #333331; border-radius: 8px; overflow: hidden;
+  pointer-events: none;
+}
+.process__media > img {
+  position: absolute; inset: var(--pad);
+  width: calc(100% - var(--pad) * 2); height: calc(100% - var(--pad) * 2);
+  object-fit: contain;
+}
+/* "System" slide: one wide strip of artefacts at full panel height. It runs off the right edge;
+   each image is its own snap point, so the strip scrolls sideways image by image. */
+.process__slide--wide { flex-basis: auto; }
+/* Its text stays in view while the strip scrolls underneath */
+.process__slide--wide > p { position: sticky; left: var(--gutter); max-width: min(911px, var(--slide-w)); }
+.process__strip {
+  --pad: clamp(12px, 2vw, 32px);
+  display: flex; gap: clamp(10px, 1.2vw, 20px);
+  height: calc(var(--slide-w) * 9 / 16);
+  padding: var(--pad);
+  background: #333331; border-radius: 8px;
+  pointer-events: none;
+}
+.process__strip img {
+  flex: none; height: 100%; width: auto;
+  border-radius: 3px;
+  scroll-snap-align: start;
 }
 .process__track.is-pointing { cursor: pointer; }
 /* Arrow that follows the mouse over the peeking previous / next slide */
@@ -416,7 +480,8 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   .work-row__title { white-space: normal; line-height: 1.1; }
   .work-row__art { margin-top: 0; margin-left: 12px; }
   .project-hero { width: 100%; }
-  .process__slide { flex-basis: 84vw; }
+  .process__track { --slide-w: 84vw; }
+  .process__strip { height: max(calc(var(--slide-w) * 9 / 16), 320px); }
   .site-header { padding-inline: var(--gutter); }
   .site-footer { padding-inline: var(--gutter); }
 }
