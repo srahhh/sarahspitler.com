@@ -78,15 +78,24 @@
     const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);  /* ease in-out, no overshoot */
     /* Progress follows the page's scroll: 0 at the top of the page (whatever the screen size),
        1 once the collage reaches the header. */
-    const distance = () => {
-      const docTop = collage.getBoundingClientRect().top + scrollY;
-      return Math.max(240, docTop - 66);
+    /* [start, end] of the scroll range the animation plays over. Desktop: from the top of the page
+       until the collage reaches the header. Small screens, where the collage is short and far down:
+       from when it comes into view until it sits in the middle of the screen. */
+    const range = () => {
+      const r = collage.getBoundingClientRect();
+      const docTop = r.top + scrollY;
+      if (innerWidth < 700) {
+        const start = Math.max(0, docTop - innerHeight * 0.95);
+        const end = docTop + r.height / 2 - innerHeight / 2;
+        return [start, Math.max(start + 160, end)];
+      }
+      return [0, Math.max(240, docTop - 66)];
     };
     let ticking = false;
     const render = () => {
       ticking = false;
       if (!collage.offsetParent) return;               /* hidden (password screen) */
-      const p = Math.min(1, Math.max(0, scrollY / distance()));
+      const [a, b] = range(); const p = Math.min(1, Math.max(0, (scrollY - a) / (b - a)));
       movers.forEach(({ el, from, to, slide, slideTo, slideYTo, delay }) => {
         const e = ease(Math.min(1, Math.max(0, (p - delay) / SPAN)));
         const angle = from + (to - from) * e;

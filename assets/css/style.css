@@ -683,3 +683,9 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 
 /* Portrait items (an email) sit centered at a readable width instead of filling the frame */
 .media__slide--narrow > img { width: min(100%, 640px); margin: 0 auto; }
+
+/* Bread collage on phones: inset from the screen edges so no shape is cut off */
+@media (max-width: 699px) {
+  .project-hero.bread-collage { padding: 0 var(--gutter); margin-top: 8px; }
+  .project-hero.bread-collage .collage { overflow-x: clip; }
+}
