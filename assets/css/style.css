@@ -150,22 +150,60 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   transition: background-color .35s ease, color .25s ease, border-color .35s ease;
 }
 .work-list .work-row:last-child { border-bottom-color: transparent; }
-.work-row__title {
-  font-size: var(--fs-display); font-weight: 400; line-height: 1.3;
-  white-space: nowrap;
+/* Name + illustration move together. Inside the lockup 1em = the display size (140px in Figma),
+   so illustration sizes and offsets are written as Figma pixels: calc(N * var(--a)). */
+.work-row__lockup {
+  --a: calc(1em / 140);
+  transform-origin: 0 50%;
+  display: inline-flex; align-items: flex-start;
+  font-size: var(--fs-display);
   transition: transform .55s var(--ease);
 }
-/* Illustration sits at cap height, just after the name. Swap the src per project. */
-.work-row__art {
-  flex: none;
-  width: calc(154 * var(--u)); min-width: 56px; height: auto;
-  margin: calc(41 * var(--u)) 0 0 0;
-  transition: transform .7s var(--ease), opacity .3s ease;
+.work-row__title { font-size: 1em; font-weight: 400; line-height: 1.3; white-space: nowrap; }
+
+/* ---------- Illustrations ---------- */
+.art { position: relative; flex: none; display: block; scale: .85; transform-origin: 0 50%; }  /* a touch smaller, sitting close to the name */
+.art img { display: block; width: 100%; height: auto; }
+.art__rest { transition: transform .7s var(--ease), opacity .3s ease; }
+/* Extras that appear on hover: hidden and shrunk until then */
+.art__pop {
+  position: absolute; max-width: none;
+  opacity: 0; transform: scale(.3) rotate(-20deg);
+  transition: opacity .2s ease, transform .45s cubic-bezier(.3, 1.6, .5, 1);
 }
+
+/* Placeholder (projects without their own illustration yet) */
+.art--placeholder { width: calc(154 * var(--a)); margin: calc(39.5 * var(--a)) 0 0 calc(6 * var(--a)); }
+
+/* BNSF: the train pulls away to the right, tilts forward and turns pink (hover artwork) */
+.art--bnsf { width: calc(125.7 * var(--a)); margin: calc(41.5 * var(--a)) 0 0 calc(12 * var(--a)); }
+.art--bnsf .pop-train {
+  left: calc(28.5 * var(--a)); top: calc(-21.5 * var(--a)); width: calc(129.1 * var(--a));
+  transform: translate(calc(-28.5 * var(--a)), calc(21.5 * var(--a))) rotate(10.7deg);
+  transition: opacity .3s ease, transform .9s cubic-bezier(.5, 0, .2, 1.3);
+}
+
+/* Bread: the card tips, and the things people buy with it pop out around it */
+.art--bread { width: calc(59 * var(--a)); margin: calc(41.5 * var(--a)) 0 0 calc(10 * var(--a)); }
+.art--bread .pop-tent      { left: calc(143.1 * var(--a)); top: calc(-4.4 * var(--a));  width: calc(52.8 * var(--a)); }
+.art--bread .pop-rv        { left: calc(83.5 * var(--a));  top: calc(15.5 * var(--a));  width: calc(65.5 * var(--a)); }
+.art--bread .pop-perfume   { left: calc(156.3 * var(--a)); top: calc(40.5 * var(--a));  width: calc(30.5 * var(--a)); }
+.art--bread .pop-hairdryer { left: calc(89.2 * var(--a));  top: calc(-22.4 * var(--a)); width: calc(37.8 * var(--a)); }
+.art--bread .pop-makeup    { left: calc(97.3 * var(--a));  top: calc(54.5 * var(--a));  width: calc(45.2 * var(--a)); }
+
+/* Intel: the chip switches to its animated pink and yellow version */
+.art--intel { width: calc(47 * var(--a)); margin: calc(36 * var(--a)) 0 0 calc(4 * var(--a)); }
+.art--intel .pop-chip { left: 0; top: 0; width: 100%; transform: none; transition: opacity .15s ease; }
+
+/* Humana: the pill turns red and spins for as long as the row is hovered */
+.art--humana { width: calc(75.7 * var(--a)); margin: calc(47.6 * var(--a)) 0 0 calc(6 * var(--a)); }
+.art--humana .pop-pill { left: 0; top: 0; width: 100%; }
+@keyframes pill-spin { to { transform: rotate(360deg); } }
+
 .work-row__detail {
   position: absolute; left: 31px; top: calc(34 * var(--u));
   display: flex; align-items: flex-start; gap: 44px;
-  color: #fff; opacity: 0; transform: translateX(-16px);
+  color: inherit; opacity: 0; transform: translateX(-16px);
   transition: opacity .25s ease, transform .45s var(--ease);
   pointer-events: none;
 }
@@ -180,28 +218,60 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 
 /* Entrance: names rise, illustrations roll in from the right */
 .js .work-list .work-row__title { animation: rise .7s var(--ease) both; animation-delay: calc(var(--i, 0) * 70ms); }
-.js .work-list .work-row__art { animation: roll-in 1.1s var(--ease) both; animation-delay: calc(200ms + var(--i, 0) * 110ms); }
+.js .work-list .art { animation: roll-in 1.1s var(--ease) both; animation-delay: calc(200ms + var(--i, 0) * 110ms); }
 @keyframes rise { from { opacity: 0; translate: 0 24px; } }
 @keyframes roll-in { from { opacity: 0; translate: 60vw 0; } }
 
-/* Hover / focus state */
+/* Hover / focus state: the row fills with the project colour; the other rows step back */
 .work-row:hover, .work-row:focus-visible {
-  background: var(--accent); border-bottom-color: var(--accent); color: #fff;
+  background: var(--accent); border-bottom-color: var(--accent); color: var(--on-accent, #fff);
 }
-@media (hover: hover) and (min-width: 1100px) {
-  .work-row:hover .work-row__title, .work-row:focus-visible .work-row__title {
+.work-row { transition: background-color .35s ease, color .25s ease, border-color .35s ease, opacity .3s ease; }
+.work-list:has(.work-row:hover) .work-row:not(:hover),
+.work-list:has(.work-row:focus-visible) .work-row:not(:focus-visible) { opacity: .5; }
+@media (hover: hover) and (min-width: 905px) {
+  .work-row:hover .work-row__lockup, .work-row:focus-visible .work-row__lockup {
     transform: translateX(max(calc(462 * var(--u)), 410px));
   }
   .work-row:hover .work-row__detail, .work-row:focus-visible .work-row__detail {
     opacity: 1; transform: none; transition-delay: .12s;
   }
-  .work-row:hover .work-row__art, .work-row:focus-visible .work-row__art {
-    transform: translateX(110vw); opacity: 0;
-    transition: transform .9s cubic-bezier(.6, 0, .9, .4), opacity .3s ease .5s;
+  .work-row:hover .art--bnsf .art__rest, .work-row:focus-visible .art--bnsf .art__rest {
+    transform: translate(calc(28.5 * var(--a)), calc(-10 * var(--a))) rotate(-10.7deg); opacity: 0;
+    transition: transform .9s cubic-bezier(.5, 0, .2, 1.3), opacity .3s ease;
   }
+  .work-row:hover .art--bread .art__rest, .work-row:focus-visible .art--bread .art__rest {
+    transform: translate(calc(9 * var(--a)), calc(9.3 * var(--a))) rotate(-16deg);
+  }
+  .work-row:hover .art--humana .art__rest, .work-row:focus-visible .art--humana .art__rest { opacity: 0; }
+  .work-row:hover .art--intel .art__rest, .work-row:focus-visible .art--intel .art__rest { opacity: 0; transition: opacity .15s ease; }
+  .work-row:hover .art--humana .pop-pill, .work-row:focus-visible .art--humana .pop-pill {
+    transform: none; scale: .94; transition: opacity .15s ease, scale .3s ease; animation: pill-spin 1.1s linear infinite;
+  }
+  .work-row:hover .art__pop, .work-row:focus-visible .art__pop { opacity: 1; transform: none; }
+  .work-row:hover .art__pop:nth-child(2), .work-row:focus-visible .art__pop:nth-child(2) { transition-delay: .18s; }
+  .work-row:hover .art__pop:nth-child(3), .work-row:focus-visible .art__pop:nth-child(3) { transition-delay: .24s; }
+  .work-row:hover .art__pop:nth-child(4), .work-row:focus-visible .art__pop:nth-child(4) { transition-delay: .30s; }
+  .work-row:hover .art__pop:nth-child(5), .work-row:focus-visible .art__pop:nth-child(5) { transition-delay: .36s; }
+  .work-row:hover .art__pop:nth-child(6), .work-row:focus-visible .art__pop:nth-child(6) { transition-delay: .42s; }
 }
-@media not ((hover: hover) and (min-width: 1100px)) {
+@media (hover: hover) and (min-width: 905px) and (max-width: 1319px) {
+  .work-row__detail { left: 24px; gap: 24px; }
+  .work-row__detail { top: calc(30 * var(--u)); }
+  .work-row__detail-text {
+    width: 220px; padding-top: 2px; font-size: 12px; line-height: 16px;
+    display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 4; line-clamp: 4; overflow: hidden;
+  }
+  .work-row__detail-text strong { margin-bottom: 6px; }
+  .work-row:hover .work-row__lockup, .work-row:focus-visible .work-row__lockup { transform: translateX(300px) scale(.86); }
+}
+/* Keep the longest name and its train inside the row at mid widths */
+@media (hover: hover) and (min-width: 1320px) and (max-width: 1699px) {
+  .work-row:hover .work-row__lockup, .work-row:focus-visible .work-row__lockup { transform: translateX(max(calc(462 * var(--u)), 410px)) scale(.95); }
+}
+@media not ((hover: hover) and (min-width: 905px)) {
   .work-row__detail { display: none; }
+  .art__pop { display: none; }
 }
 
 /* ---------- Project page ---------- */
@@ -238,6 +308,30 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   padding: calc(91 * var(--u)) var(--gutter) calc(39 * var(--u));
   display: grid; gap: clamp(48px, calc(80 * var(--u)), 80px);
 }
+/* Bread hero: a collage rebuilt in code (Figma "Bread image").
+   Positions are % of the artwork's full bounds; it is pulled up by its top overhang. */
+.project-hero.bread-collage { width: 100%; margin-top: calc(-148 / 1932.25 * 100%); overflow-x: clip; }
+.collage { position: relative; aspect-ratio: 1932.25 / 908; }
+.collage > * { position: absolute; display: block; max-width: none; }
+.collage img { object-fit: fill; }
+.collage .coin svg { width: 100%; height: 100%; }
+.half { will-change: transform; }
+.collage [data-fade] { opacity: var(--o, 1); }
+.half--top    { border-radius: 50% 50% 0 0 / 100% 100% 0 0; }
+.half--bottom { border-radius: 0 0 50% 50% / 0 0 100% 100%; }
+.half--left   { border-radius: 100% 0 0 100% / 50% 0 0 50%; }
+.half--right  { border-radius: 0 100% 100% 0 / 0 50% 50% 0; }
+.c-yellow  { background: #ffb81c; }
+.c-seafoam { background: #59bec9; }
+.c-teal    { background: #1c8195; }
+.c-red     { background: #e03c31; }
+.c-navy    { background: #13294b; }
+
+/* Hero that keeps its own proportions (wide collages) */
+.project-hero.project-hero--natural { width: 100%; }
+.project-hero.project-hero--natural img { aspect-ratio: auto; object-fit: contain; }
+.project-hero picture { display: block; }
+
 .chapter { max-width: 1056px; }
 .chapter__num { font-size: 20px; line-height: 35px; color: var(--muted); margin-bottom: 16px; }
 .chapter p:not(.chapter__num) { font-size: var(--fs-body); line-height: 1.5; }
@@ -286,6 +380,16 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .video__time { flex: none; font-family: var(--font-mono); font-size: 12px; color: var(--caption); font-variant-numeric: tabular-nums; }
 .media__frame:has(.video__controls) { padding-bottom: clamp(10px, 1.6vw, 20px); }
 
+/* Tall videos (near-square recordings) stay within the screen height */
+.video--tall video { width: auto; max-width: 100%; max-height: min(82vh, 980px); margin-inline: auto; }
+/* Long page captures scroll inside their frame */
+.media__frame--scroll {
+  max-height: min(82vh, 980px); overflow-y: auto; overscroll-behavior-y: auto;
+  scrollbar-width: thin;
+}
+.media__frame--scroll img { width: 100%; border-radius: 2px; }
+.media figcaption a { color: var(--ink); white-space: nowrap; }
+
 .media figcaption {
   display: flex; align-items: flex-start; gap: 12px;
   margin-top: 20px; max-width: 1095px;
@@ -296,11 +400,13 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 /* Media carousel: several items in one frame; the caption follows the item in view */
 .media__track {
   display: flex; gap: 32px; min-width: 0;
-  overflow-x: auto; overscroll-behavior-x: contain;
+  overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain;
   scroll-snap-type: x mandatory; scrollbar-width: none;
 }
 .media__track::-webkit-scrollbar { display: none; }
-.media__slide { flex: 0 0 100%; min-width: 0; scroll-snap-align: start; align-self: flex-start; }
+/* Each slide is cut to the frame's height, so a taller item can never make the frame scroll vertically */
+.media__slide { flex: 0 0 100%; min-width: 0; scroll-snap-align: start; align-self: stretch; overflow: hidden; }
+.media__slide > * { display: block; }
 .media__track { transition: height .45s var(--ease); }
 .media--carousel figcaption { max-width: none; }
 .media__captions { flex: 1; min-width: 0; max-width: 1039px; }
@@ -385,6 +491,12 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   background: #333331; border-radius: 8px;
   pointer-events: none;
 }
+/* Taller strip for screen-by-screen flows, so the screens stay legible */
+.process__strip--tall { height: min(88vh, 1000px); }
+/* Images that are slices of one export sit edge to edge */
+.process__strip--seamless { gap: 0; }
+.process__strip.process__strip--seamless img { border-radius: 0; }
+.process__dots[hidden] { display: none; }
 .process__strip img {
   flex: none; height: 100%; width: auto;
   border-radius: 3px;
@@ -477,11 +589,14 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 @media (max-width: 699px) {
   .work-list { margin: 78px 0 0; }
   .work-row { padding-left: var(--gutter); padding-right: var(--gutter); height: auto; padding-block: 14px 18px; align-items: center; }
-  .work-row__title { white-space: normal; line-height: 1.1; }
-  .work-row__art { margin-top: 0; margin-left: 12px; }
+  /* Name and illustration stay together on one line */
+  .work-row__lockup { font-size: clamp(30px, 8.8vw, 40px); }
+  .work-row__title { line-height: 1.1; }
+  .work-row .art { scale: 1; }
   .project-hero { width: 100%; }
   .process__track { --slide-w: 84vw; }
   .process__strip { height: max(calc(var(--slide-w) * 9 / 16), 320px); }
+  .process__strip--tall { height: min(78vh, 640px); }
   .site-header { padding-inline: var(--gutter); }
   .site-footer { padding-inline: var(--gutter); }
 }
@@ -528,3 +643,43 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 @media (min-width: 1100px) {
   .project-hero { width: min(calc(1511 / 1920 * 100%), calc(100% - 387px)); }
 }
+
+/* Walmart hero: two screens layered on Walmart blue */
+.walmart-hero__stage {
+  position: relative; overflow: hidden;
+  aspect-ratio: 1511 / 861;
+  background: #0053e2;
+}
+.project-hero .walmart-hero__stage img {
+  position: absolute; aspect-ratio: auto; object-fit: contain; height: auto;
+  border-radius: 6px;
+  box-shadow: 0 24px 60px rgba(0, 20, 70, .35);
+}
+.project-hero .walmart-hero__back { width: 58%; left: 7%; top: 9%; }
+.project-hero .walmart-hero__front { width: 52%; left: 42%; top: 24%; }
+.chapter p:not(.chapter__num) + p { margin-top: 1em; }
+
+/* Humana hero: CenterWell leaf pattern with a booking screen and a confirmation text */
+.humana-hero__stage {
+  position: relative; overflow: hidden;
+  aspect-ratio: 1511 / 861;
+  background: #e8f0f8 url(../img/humana-hero/leaf-tile.svg) 0 0 / calc(67.2px * 1.4) calc(80px * 1.4) repeat;
+}
+.project-hero .humana-hero__stage img { position: absolute; aspect-ratio: auto; object-fit: contain; height: auto; }
+.project-hero .humana-hero__screen {
+  width: 50%; left: 14%; top: 8%;
+  border-radius: 8px; box-shadow: 0 24px 60px rgba(0, 61, 165, .22);
+}
+.project-hero .humana-hero__phone {
+  width: 19%; left: 60%; top: 16%;
+  filter: drop-shadow(0 24px 40px rgba(0, 61, 165, .28));
+}
+
+/* UPS hero: desktop and mobile confirmation on UPS brown */
+.ups-hero__stage { position: relative; overflow: hidden; aspect-ratio: 1511 / 861; background: #351c15; }
+.project-hero .ups-hero__stage img { position: absolute; aspect-ratio: auto; object-fit: contain; height: auto; border-radius: 8px; box-shadow: 0 30px 70px rgba(0, 0, 0, .45); }
+.project-hero .ups-hero__desktop { width: 60%; left: 8%; top: 10%; }
+.project-hero .ups-hero__mobile { width: 19%; left: 64%; top: 18%; border-radius: 18px; }
+
+/* Portrait items (an email) sit centered at a readable width instead of filling the frame */
+.media__slide--narrow > img { width: min(100%, 640px); margin: 0 auto; }

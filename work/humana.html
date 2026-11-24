@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="../assets/css/style.css">
   <script src="../assets/js/gate.js"></script>
 </head>
-<body style="--accent: #1f8a5b">
+<body style="--accent: #447f12">
   <noscript><p class="gate-noscript">This site needs JavaScript turned on to unlock.</p></noscript>
 
   <header class="site-header">
@@ -45,37 +45,201 @@
   <main class="project">
     <div class="project-top">
     <header class="project-intro">
-      <h1 class="project-intro__title"><span>Humana</span> Case study in progress — one-line summary of the project goes here.</h1>
+      <h1 class="project-intro__title"><span>Humana</span> The MVP of a new scheduling platform: new patients book, reschedule or cancel a visit online, with no account and no phone call, on a foundation built to grow.</h1>
       <dl class="meta">
-        <div><dt>Scope</dt><dd>To come</dd></div>
-        <div><dt>Timeline</dt><dd>To come</dd></div>
-        <div><dt>Role</dt><dd>To come</dd></div>
+        <div><dt>Scope</dt><dd>End-to-end user flows, eligibility and edge-case logic, notifications, internal admin tools, regulated consent capture</dd></div>
+        <div><dt>Timeline</dt><dd>Kicked off July 2025; MVP first in a three-phase roadmap</dd></div>
+        <div><dt>Role</dt><dd>Experience lead on a small cross-functional team with product, engineering and CenterWell’s UX team</dd></div>
       </dl>
     </header>
 
-    <figure class="project-hero">
-      <div style="aspect-ratio: 1511 / 861; background: var(--surface)" role="img" aria-label="Hero image placeholder"></div>
+    <figure class="project-hero humana-hero">
+      <!-- Leaf pattern recreated from the CenterWell card component (Scheduling and VM file): two columns of leaves, opacity stepping 100/68/42/24% -->
+      <div class="humana-hero__stage" role="img" aria-label="The date and time step of CenterWell online scheduling, with a confirmation text message on a phone, over a pattern of blue leaves">
+        <img class="humana-hero__screen" src="../assets/img/humana-date-time.jpg" width="1280" height="1315" alt="" decoding="async">
+        <img class="humana-hero__phone" src="../assets/img/humana-hero/sms-phone.webp" width="428" height="874" alt="" decoding="async">
+      </div>
     </figure>
     </div>
 
+    <!-- Light area: final work -->
     <div class="project-body">
       <section class="chapter">
         <p class="chapter__num">I.</p>
-        <p><span class="lead">Coming soon.</span> Copy work/bnsf.html as the pattern for this page: chapters and media in the light area, process and takeaways in the dark area.</p>
+        <p><span class="lead">How might older adults book a doctor’s visit without waiting on hold, or even creating an account?</span> Booking a visit at CenterWell, Humana’s senior-focused primary care practice, usually meant calling in, waiting on hold and hoping to catch a callback. Older adults, flooded with spam calls, often miss those callbacks, and every missed call is a patient who may not book at all. CenterWell set out to build its own scheduling platform across primary care, home health and pharmacy. Our team designed the first release: an MVP that lets new patients book a visit online without creating an account or picking up the phone. It covers the full lifecycle, from finding a provider through managing the appointment afterward, and sets the patterns for every phase that follows.</p>
+      </section>
+
+      <section class="chapter">
+        <p class="chapter__num">II.</p>
+        <p><span class="lead">No sign-up, no log-in.</span> Scheduling starts from a secure link in a text, an email or the CenterWell and Humana Find Care sites. Provider and location details carry over, and patients never sign up or log in. Four simple steps (provider, details, time, confirm) keep the flow short for people who are less comfortable online.</p>
+      </section>
+
+      <figure class="media">
+        <div class="media__frame">
+          <img src="../assets/img/humana-date-time.jpg" width="1280" height="1315" loading="lazy" alt="Schedule an appointment, date and time step: a progress bar, a week of days with open times under each, a note that times are shown in Central Standard Time, and a card for the chosen provider">
+        </div>
+        <figcaption><svg viewBox="0 0 16 20" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true"><path d="M8 20V1M1 8l7-7 7 7"/></svg><span>Open times are grouped by day and time of day and shown in the patient’s own time zone, including in states split across two. The chosen provider stays in view the whole way through.</span></figcaption>
+      </figure>
+
+      <section class="chapter">
+        <p class="chapter__num">III.</p>
+        <p>Eligibility and record matching run in real time against the EMR. Ineligible patients get specific guidance instead of a dead end, and existing patients are routed to the patient portal so no duplicate records are created.</p>
+      </section>
+
+      <figure class="media media--carousel" data-media-carousel>
+        <div class="media__frame">
+          <div class="media__track" tabindex="0" aria-label="Eligibility screens — 2 items, scroll sideways">
+            <div class="media__slide">
+              <img src="../assets/img/humana-coverage.jpg" width="1440" height="1516" loading="lazy" alt="Coverage step asking whether the patient is new or current and whether they have Medicare, with large tappable answers">
+            </div>
+            <div class="media__slide">
+              <img src="../assets/img/humana-sign-in-modal.jpg" width="1440" height="941" loading="lazy" alt="A dialog for current patients: register or sign in to the Patient Portal to schedule">
+            </div>
+          </div>
+        </div>
+        <figcaption>
+          <svg viewBox="0 0 16 20" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true"><path d="M8 20V1M1 8l7-7 7 7"/></svg>
+          <span class="media__captions" aria-live="polite">
+            <span>Two plain questions come first: is this your first visit, and do you have Medicare? Large, illustrated answers make the choice easy to read and easy to tap.</span>
+            <span hidden>Patients who’ve been seen in the last three years already have a record, so they’re sent to the patient portal instead of creating a duplicate.</span>
+          </span>
+          <span class="media__nav">
+            <span class="media__count" aria-hidden="true">1 / 2</span>
+            <button class="media__prev" type="button" aria-label="Previous item"><svg viewBox="0 0 20 16" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true"><path d="M0 8h19M12 1l7 7-7 7"/></svg></button>
+            <button class="media__next" type="button" aria-label="Next item"><svg viewBox="0 0 20 16" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true"><path d="M0 8h19M12 1l7 7-7 7"/></svg></button>
+          </span>
+        </figcaption>
+      </figure>
+
+      <section class="chapter">
+        <p class="chapter__num">IV.</p>
+        <p>Consent and a choice of text or email are captured inline and required before booking, so compliance is built into the flow rather than added after.</p>
+      </section>
+
+      <figure class="media">
+        <div class="media__frame">
+          <img src="../assets/img/humana-review-consent.jpg" width="1280" height="2106" loading="lazy" alt="Review page with patient information and appointment details, each editable, followed by HIPAA, TCPA and text message consent language and an agreement checkbox">
+        </div>
+        <figcaption><svg viewBox="0 0 16 20" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true"><path d="M8 20V1M1 8l7-7 7 7"/></svg><span>The review step brings everything together on one page, with an edit link beside every detail and the HIPAA, TCPA and text message consent the patient agrees to before booking.</span></figcaption>
+      </figure>
+
+      <section class="chapter">
+        <p class="chapter__num">V.</p>
+        <p>Confirmations and reminders arrive by the patient’s chosen channel, each with a secure one-click link to view, reschedule or cancel.</p>
+      </section>
+
+      <figure class="media media--carousel" data-media-carousel>
+        <div class="media__frame">
+          <div class="media__track" tabindex="0" aria-label="Confirmation screens — 2 items, scroll sideways">
+            <div class="media__slide">
+              <img src="../assets/img/humana-confirmation.jpg" width="1280" height="1522" loading="lazy" alt="Appointment confirmation page with a high-five illustration, preparation instructions, appointment details and how to manage the appointment">
+            </div>
+            <div class="media__slide">
+              <img src="../assets/img/humana-email-confirmation.jpg" width="1512" height="1424" loading="lazy" alt="Confirmation email with the provider, location, date and time, and Reschedule and Cancel appointment links">
+            </div>
+          </div>
+        </div>
+        <figcaption>
+          <svg viewBox="0 0 16 20" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true"><path d="M8 20V1M1 8l7-7 7 7"/></svg>
+          <span class="media__captions" aria-live="polite">
+            <span>The confirmation tells patients what to expect: how long the visit takes, whether to fast, what to bring and when to arrive.</span>
+            <span hidden>The confirmation email repeats the essentials, with one-click links to reschedule or cancel.</span>
+          </span>
+          <span class="media__nav">
+            <span class="media__count" aria-hidden="true">1 / 2</span>
+            <button class="media__prev" type="button" aria-label="Previous item"><svg viewBox="0 0 20 16" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true"><path d="M0 8h19M12 1l7 7-7 7"/></svg></button>
+            <button class="media__next" type="button" aria-label="Next item"><svg viewBox="0 0 20 16" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true"><path d="M0 8h19M12 1l7 7-7 7"/></svg></button>
+          </span>
+        </figcaption>
+      </figure>
+
+      <section class="chapter">
+        <p class="chapter__num">VI.</p>
+        <p>An internal rules engine lets operations staff set visit types, durations and provider rules, such as new patients only on certain days, without engineering help. Overrides are logged.</p>
+      </section>
+
+      <figure class="media media--carousel" data-media-carousel>
+        <div class="media__frame">
+          <div class="media__track" tabindex="0" aria-label="Schedule Builder admin screens — 5 items, scroll sideways">
+            <div class="media__slide">
+              <img src="../assets/img/humana-admin-redesign-dashboard.jpg" width="1440" height="996" loading="lazy" alt="Schedule Builder dashboard: a sidebar with a department picker, search and eight template filters, a view-by control and color-coded schedule templates, each with an Edit button">
+            </div>
+            <div class="media__slide">
+              <img src="../assets/img/humana-admin-redesign-slots.jpg" width="1440" height="1546" loading="lazy" alt="Appointment Slots: filters, a bar to select and freeze or delete slots in bulk, and slots grouped by provider with open, booked and frozen status">
+            </div>
+            <div class="media__slide">
+              <img src="../assets/img/humana-admin-redesign-template.jpg" width="1440" height="1760" loading="lazy" alt="Add Template as five numbered steps (details, schedule pattern, days and times, providers, visit types) with a progress panel">
+            </div>
+            <div class="media__slide">
+              <img src="../assets/img/humana-admin-redesign-options.jpg" width="1440" height="978" loading="lazy" alt="Configure Options general settings: provider availability, default appointment durations, booking lead times and notification settings, with tabs for the other option lists">
+            </div>
+            <div class="media__slide">
+              <img src="../assets/img/humana-admin-redesign-reasons.jpg" width="1440" height="772" loading="lazy" alt="Cancellation reasons list with an Add reason button and Edit and Delete on each reason">
+            </div>
+          </div>
+        </div>
+        <figcaption>
+          <svg viewBox="0 0 16 20" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true"><path d="M8 20V1M1 8l7-7 7 7"/></svg>
+          <span class="media__captions" aria-live="polite">
+            <span>The Schedule Builder keeps the department you’re working in pinned to the top of the sidebar. The dashboard puts every schedule template in one list, with search, eight filters and a view-by control.</span>
+            <span hidden>Appointment Slots groups slots by provider, with a status on every row and a bar for freezing or deleting many slots at once, the jobs staff came to this page to do.</span>
+            <span hidden>Building a template, once one long form, now runs in five numbered steps, with a panel that shows where you are.</span>
+            <span hidden>Configure Options gathers every scheduling setting in one place, with tabs for appointment types, cancellation reasons, slot freeze reasons and holidays.</span>
+            <span hidden>Each list of options (cancellation reasons here) works the same way: add, edit or delete, with a confirmation before anything is removed.</span>
+          </span>
+          <span class="media__nav">
+            <span class="media__count" aria-hidden="true">1 / 5</span>
+            <button class="media__prev" type="button" aria-label="Previous item"><svg viewBox="0 0 20 16" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true"><path d="M0 8h19M12 1l7 7-7 7"/></svg></button>
+            <button class="media__next" type="button" aria-label="Next item"><svg viewBox="0 0 20 16" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true"><path d="M0 8h19M12 1l7 7-7 7"/></svg></button>
+          </span>
+        </figcaption>
+      </figure>
+
+      <section class="chapter">
+        <p class="chapter__num">VII.</p>
+        <p><span class="lead">Outcomes.</span> Zero accounts or passwords needed to book, reschedule or cancel a visit. Four simple steps, from choosing a provider to a confirmed appointment. And one foundation for the later phases: existing patients, brokers, home health, pharmacy and AI-assisted scheduling.</p>
+        <p>I turned the feature roadmap into end-to-end flows, from provider search through eligibility checks, booking and confirmation; built on the existing Humana Design System to create a guided booking flow that handles eligibility and patient matches; designed visit management by email and SMS; and defined and designed an internal rules engine so operations users can configure the experience from the EMR platform.</p>
       </section>
     </div>
+
+    <!-- Dark area: process. Scrolls sideways. -->
+    <section class="process" aria-labelledby="process-heading">
+      <h2 class="process__heading" id="process-heading">Process &amp; Takeaways</h2>
+      <ul class="process__track" tabindex="0" aria-label="Process and takeaways — scroll sideways">
+        <li class="process__slide process__slide--wide">
+          <p><em>Simplified hand in hand with product and the client’s technical teams:</em> I mapped the feature spec onto one high-level flow, tagging every screen with the feature it delivers. Working through it with product management and CenterWell’s technical teams, we tested each step against what their systems could support, parked open questions like estimated costs and pre-filled forms for later phases, and got it down to two short paths: book from either Find Care site, then confirm, reschedule or cancel from one secure link.</p>
+          <div class="process__strip">
+            <img src="../assets/img/humana-flows-scheduling.jpg" width="1750" height="1400" loading="lazy" alt="High-level self-scheduling flow: from the CenterWell or Humana provider search to making the appointment, a summary and a thank-you page, with each screen tagged to a feature and notes on duplicate records, age checks, estimated costs and pre-filled forms">
+            <img src="../assets/img/humana-flows-management.jpg" width="3139" height="1400" loading="lazy" alt="High-level appointment management flow: from the confirmation email or text to appointment details, then confirm, reschedule or cancel, each ending in a new confirmation">
+          </div>
+        </li>
+        <li class="process__slide process__slide--wide">
+          <p><em>Every path, not just the happy one:</em> eligibility, duplicate records, consent, expiring links and time zones each got a clear way forward. Rescheduling and cancelling were designed end to end, from the text message to the confirmation.</p>
+          <div class="process__strip">
+            <img src="../assets/img/humana-reschedule-flow.jpg" width="1691" height="1145" loading="lazy" alt="Reschedule flow: changing location, returning to Find Care with the zip code kept, and picking a new provider">
+            <img src="../assets/img/humana-cancel-flow.jpg" width="1761" height="1095" loading="lazy" alt="Cancel flow: the text message after booking, the cancel screen with a reason, the cancellation confirmation and the follow-up text">
+          </div>
+        </li>
+        <li class="process__slide">
+          <p><em>The platform behind the experience:</em> mapping what operations staff could already do in the legacy scheduler showed where to simplify, and set up the rules engine and patterns that extend to existing patients, brokers, home health and pharmacy.</p>
+          <div class="process__media"><img src="../assets/img/humana-admin-ia.jpg" width="2400" height="2090" loading="lazy" alt="Proposed information architecture for the Schedule Builder: appointment slots, templates and configurable options, next to existing capabilities and opportunities"></div>
+        </li>
+      </ul>
+      <div class="process__dots"></div>
+    </section>
   </main>
 
   <nav class="next" aria-label="Next project">
     <span class="sr-only">Next project:</span>
-    <a class="work-row" href="../work/intel.html" style="--accent: #0a7ea4">
+    <a class="work-row" href="../work/intel.html" style="--accent: #00c7fd; --on-accent: #000">
       <span class="work-row__detail" aria-hidden="true">
         <span class="arrow-circle"><svg viewBox="0 0 20 16" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true"><path d="M0 8h19M12 1l7 7-7 7"/></svg></span>
-        <span class="work-row__detail-text"><strong>Tagline to come</strong>Scope to come</span>
+        <span class="work-row__detail-text"><strong>A decade of evolution</strong>Scope to come</span>
       </span>
-      <span class="work-row__title">Intel</span>
-      <!-- Illustration placeholder: swap for this project's own artwork -->
-      <img class="work-row__art" src="../assets/img/train-placeholder.png" width="154" height="42" alt="">
+      <span class="work-row__lockup">
+        <span class="work-row__title">Intel</span>
+        <span class="art art--intel" aria-hidden="true"><img class="art__rest" src="../assets/img/art/intel-chip.svg" width="71" height="74" alt=""><img class="art__pop pop-chip" src="../assets/img/art/intel-chip-hover.svg" width="71" height="74" alt=""></span>
+      </span>
     </a>
   </nav>
 

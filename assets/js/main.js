@@ -52,8 +52,63 @@
     addEventListener("scroll", request, { passive: true });
     addEventListener("resize", request);
     sticky.addEventListener("change", request);
+    if ("ResizeObserver" in window) new ResizeObserver(request).observe(hero);
     fade();
   }
+
+  /* ---------- Collage: shapes swing into place as the page scrolls ---------- */
+  document.querySelectorAll(".collage").forEach((collage) => {
+    const num = (v, d = 0) => (v === undefined ? d : parseFloat(v) || 0);
+    const movers = [...collage.querySelectorAll("[data-swing], [data-swing-to], [data-slide], [data-slide-to], [data-slide-y-to]")].map((el) => ({
+      el,
+      from: num(el.dataset.swing), to: num(el.dataset.swingTo),   /* degrees, whole quarter turns */
+      slide: num(el.dataset.slide), slideTo: num(el.dataset.slideTo), /* % of its own width */
+      slideYTo: num(el.dataset.slideYTo),                          /* % of its own height */
+      delay: num(el.dataset.delay),
+    }));
+    const fades = [...collage.querySelectorAll("[data-fade]")].map((el) => ({ el, to: num(el.dataset.fade, 1) }));
+    const settle = () => {
+      movers.forEach(({ el, to, slideTo, slideYTo }) => {
+        el.style.transform = [slideTo ? `translateX(${slideTo}%)` : "", slideYTo ? `translateY(${slideYTo}%)` : "", to ? `rotate(${to}deg)` : ""].join(" ").trim();
+      });
+      fades.forEach(({ el, to }) => el.style.setProperty("--o", to));
+    };
+    if (reduceMotion) { settle(); return; }            /* everything simply sits in its final place */
+    const SPAN = 0.55;                                 /* share of the scroll each shape takes to land */
+    const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);  /* ease in-out, no overshoot */
+    /* Progress follows the page's scroll: 0 at the top of the page (whatever the screen size),
+       1 once the collage reaches the header. */
+    const distance = () => {
+      const docTop = collage.getBoundingClientRect().top + scrollY;
+      return Math.max(240, docTop - 66);
+    };
+    let ticking = false;
+    const render = () => {
+      ticking = false;
+      if (!collage.offsetParent) return;               /* hidden (password screen) */
+      const p = Math.min(1, Math.max(0, scrollY / distance()));
+      movers.forEach(({ el, from, to, slide, slideTo, slideYTo, delay }) => {
+        const e = ease(Math.min(1, Math.max(0, (p - delay) / SPAN)));
+        const angle = from + (to - from) * e;
+        const x = slide + (slideTo - slide) * e;
+        const parts = [];
+        if (x) parts.push(`translateX(${x.toFixed(2)}%)`);
+        const y = slideYTo * e;
+        if (y) parts.push(`translateY(${y.toFixed(2)}%)`);
+        if (angle) parts.push(`rotate(${angle.toFixed(2)}deg)`);
+        el.style.transform = parts.join(" ");
+      });
+      /* Photographs fade in over the first half of the scroll */
+      const f = ease(Math.min(1, p / 0.5));
+      fades.forEach(({ el, to }) => el.style.setProperty("--o", (to * f).toFixed(3)));
+    };
+    const request = () => { if (!ticking) { ticking = true; requestAnimationFrame(render); } };
+    addEventListener("scroll", request, { passive: true });
+    addEventListener("resize", request);
+    /* Also re-measure when the collage first becomes visible (e.g. after the password screen) */
+    if ("ResizeObserver" in window) new ResizeObserver(request).observe(collage);
+    render();
+  });
 
   /* ---------- Videos: autoplay in view, with site-styled play / pause and scrubber ---------- */
   document.querySelectorAll("[data-video]").forEach((wrap) => {
@@ -126,7 +181,7 @@
       track.scrollTo({ left: slides[i].offsetLeft - track.offsetLeft, behavior: reduceMotion ? "auto" : "smooth" });
     };
     /* Items can differ in height: the frame follows the one in view */
-    const fit = () => { const h = slides[active].offsetHeight; if (h) track.style.height = h + "px"; };
+    const fit = () => { const el = slides[active].firstElementChild || slides[active]; const h = el.offsetHeight; if (h) track.style.height = h + "px"; };
     addEventListener("resize", fit);
     fig.querySelectorAll("video, img").forEach((m) => { m.addEventListener("loadedmetadata", fit); m.addEventListener("load", fit); });
     const render = (animate) => {
@@ -143,7 +198,8 @@
       slides.forEach((s, i) => { const d = Math.abs(s.offsetLeft - track.offsetLeft - track.scrollLeft); if (d < dist) { dist = d; best = i; } });
       if (best !== active && dist < w * 0.5) { active = best; render(true); }
     };
-    track.addEventListener("scroll", () => requestAnimationFrame(update), { passive: true });
+    /* Taller items must never let the frame scroll vertically past the one in view */
+    track.addEventListener("scroll", () => { if (track.scrollTop) track.scrollTop = 0; requestAnimationFrame(update); }, { passive: true });
     if (prev) prev.addEventListener("click", () => goTo(active - 1));
     if (next) next.addEventListener("click", () => goTo(active + 1));
     track.addEventListener("keydown", (e) => {
@@ -159,6 +215,7 @@
     const slides = [...track.children];
     const dots = section.querySelector(".process__dots");
     if (!slides.length) return;
+    if (slides.length < 2) dots.hidden = true;
 
     const behavior = reduceMotion ? "auto" : "smooth";
     const padL = () => parseFloat(getComputedStyle(track).paddingLeft) || 0;
@@ -209,10 +266,21 @@
         const d = Math.abs(s.offsetLeft - track.offsetLeft - pad - track.scrollLeft);
         if (d < bestDist) { bestDist = d; best = i; }
       });
+      /* While the view is anywhere inside a wide slide, that slide stays the active one */
+      slides.forEach((s, i) => {
+        if (!isWide(i)) return;
+        const [a, b] = spanOf(i);
+        if (track.scrollLeft >= a - 4 && track.scrollLeft <= b + 4) best = i;
+      });
       setActive(atEnd && track.scrollLeft > 0 ? slides.length - 1 : best);
     };
     track.addEventListener("scroll", () => requestAnimationFrame(update), { passive: true });
     update();
+    /* Slides change width as their images load: recheck which one is active */
+    if ("ResizeObserver" in window) {
+      const ro = new ResizeObserver(() => requestAnimationFrame(update));
+      slides.forEach((s) => ro.observe(s));
+    }
 
     track.addEventListener("keydown", (e) => {
       if (e.key === "ArrowRight") { e.preventDefault(); step(1); }
@@ -241,6 +309,8 @@
       const inTrack = y >= r.top && y <= r.bottom;
       if (inTrack && i === active && x > r.right - 180 && roomIn(active, 1) > 4) return "fwd";
       if (inTrack && i === active && x < r.left + 180 && roomIn(active, -1) > 4) return "back";
+      /* At the end of a wide slide, the right edge still leads on to the next slide */
+      if (inTrack && i === active && x > r.right - 180 && active < slides.length - 1) return active + 1;
       if (inTrack && active > 0 && x - r.left < 72) return active - 1;
       return -1;
     };
