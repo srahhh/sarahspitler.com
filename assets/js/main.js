@@ -80,13 +80,13 @@
        1 once the collage reaches the header. */
     /* [start, end] of the scroll range the animation plays over. Desktop: from the top of the page
        until the collage reaches the header. Small screens, where the collage is short and far down:
-       from when it comes into view until it sits in the middle of the screen. */
+       from when it comes into view until its middle is a quarter of the way down the screen. */
     const range = () => {
       const r = collage.getBoundingClientRect();
       const docTop = r.top + scrollY;
       if (innerWidth < 700) {
         const start = Math.max(0, docTop - innerHeight * 0.95);
-        const end = docTop + r.height / 2 - innerHeight / 2;
+        const end = docTop + r.height / 2 - innerHeight * 0.25;
         return [start, Math.max(start + 160, end)];
       }
       return [0, Math.max(240, docTop - 66)];
